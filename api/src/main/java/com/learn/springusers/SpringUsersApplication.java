@@ -1,14 +1,14 @@
-package com.learn.sprintusers;
+package com.learn.springusers;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @SpringBootApplication
-public class SprintUsersApplication {
+public class SpringUsersApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SprintUsersApplication.class, args);
+		SpringApplication.run(SpringUsersApplication.class, args);
 	}
 
 	@RequestMapping("/")
