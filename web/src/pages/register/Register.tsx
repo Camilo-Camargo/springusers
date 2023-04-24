@@ -17,6 +17,7 @@ export default function Register() {
         <input
           className="focus:outline-none border p-1 rounded focus:ring-1"
           placeholder='password'
+          type="password"
           onChange={(e) => { setPassword(e.target.value) }}
         />
         <button
@@ -40,6 +41,14 @@ export default function Register() {
             navigate("/");
           }}
         >Register</button>
+        <button
+          className="border p-2"
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
+          Login
+        </button>
       </div>
     </div>
   )

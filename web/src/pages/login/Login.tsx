@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -8,6 +8,10 @@ export default function Login() {
   const [usernameValid, setUsernameValid] = useState<boolean>(false);
   const [passwordValid, setPasswordValid] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  if (usernameValid && passwordValid) {
+    navigate("/home");
+  } 
 
   return (
     <div className="flex w-screen h-screen">
@@ -20,6 +24,7 @@ export default function Login() {
         <input
           className="focus:outline-none border p-1 rounded focus:ring-1"
           placeholder='password'
+          type="password"
           onChange={(e) => { setPassword(e.target.value) }}
         />
         <button
@@ -48,17 +53,15 @@ export default function Login() {
 
           }}
         >Login</button>
-        {
-          !login &&
-          <span>You need login</span>
-        }
 
-        {
-          usernameValid && <span>Username valid</span>
-        }
-        {
-          passwordValid && <span>Password valid</span>
-        }
+        <button
+          className="border rounded p-2"
+          onClick={() => {
+            navigate("/register");
+          }}
+        >
+          Register
+        </button>
       </div>
     </div>
   )
