@@ -5,16 +5,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Lob;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
+  public User(){}
+
+  public User(
+      String username,
+      String password,
+      byte[] profileImage) {
+    this.username = username;
+    this.password = password;
+    this.profileImage = profileImage;
+  }
+
   @Id
   @GeneratedValue()
   public Long id;
@@ -24,4 +32,8 @@ public class User {
 
   @Column
   private String password;
+
+  @Lob
+  @Column(length = 52428800)
+  private byte[] profileImage;
 }

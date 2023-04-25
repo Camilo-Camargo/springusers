@@ -2,10 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../storage/GlobalContext";
 
-export default function Home() {
+export default function Home({route}: any) {
   const globalContext = useContext(GlobalContext);
-  const [enableCookies, setEnableCookies] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  console.log(route);
 
   useEffect(() => {
     if (globalContext.auth) {

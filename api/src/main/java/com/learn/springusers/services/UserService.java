@@ -22,7 +22,7 @@ public class UserService implements IUser {
 	}
 
 	@Override
-	public User loginUser(User user) {
-		return (User) this.userRepository.findById(user.id).get();
+	public User loginUser(String username, String password) {
+		return (User) this.userRepository.findUserByUsernameAndPassword(username, password);
 	}
 }
