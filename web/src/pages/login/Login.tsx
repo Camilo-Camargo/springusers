@@ -37,7 +37,7 @@ export default function Login() {
             ).then(
               (data) => {
                 if (data.id) {
-                  navigate("/home", data);
+                  navigate("/home", { state: data });
                 }
               }
             );

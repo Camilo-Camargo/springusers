@@ -12,9 +12,8 @@ export default function Register() {
     formData.append("profileImage", profileImage!);
     formData.append("username", username);
     formData.append("password", password);
-    console.log(formData);
 
-    document.cookie = `username=${username} password=${password}`;
+    //document.cookie = `username=${username} password=${password}`;
     fetch("/create", {
       method: "post",
       body: formData
@@ -32,7 +31,7 @@ export default function Register() {
         <div>
           {profileImage &&
             <img
-              className="w-16 h-16 m-auto"
+              className="w-16 h-16 m-auto rounded-full object-cover"
               src={URL.createObjectURL(profileImage)}
             />
           }
