@@ -1,8 +1,11 @@
 package com.learn.springusers.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -10,8 +13,14 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.learn.springusers.repositories.UserRepository;
+
 @Component
 public class ChatHandler implements WebSocketHandler {
+
+    @Autowired
+    UserRepository userRepository;
 
     List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 
@@ -22,8 +31,9 @@ public class ChatHandler implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+        String messageJSON = (String) message.getPayload();
         for (WebSocketSession webSocketSession : sessions) {
-            webSocketSession.sendMessage(new TextMessage((String) message.getPayload()));
+            webSocketSession.sendMessage(new TextMessage(messageJSON));
         }
     }
 
