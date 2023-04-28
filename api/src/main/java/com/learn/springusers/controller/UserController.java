@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.learn.springusers.dto.UserLoginDTO;
 import com.learn.springusers.model.User;
+import com.learn.springusers.services.FileService;
 import com.learn.springusers.services.UserService;
 
 @RestController
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileService fileService;
 
     @GetMapping
     @RequestMapping(value = "create", method = RequestMethod.POST, consumes = {
@@ -30,13 +34,17 @@ public class UserController {
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("profileImage") MultipartFile image) {
+
         byte[] imageBytes = null;
+        String imageFilename = username + "/" + image.getOriginalFilename();
+
         try {
             imageBytes = image.getBytes();
+            fileService.saveFile(imageBytes, imageFilename);
         } catch (IOException e) {
             System.out.println(e);
         }
-        User user = new User(username, password, imageBytes);
+        User user = new User(username, password, imageFilename);
         userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User Created");
     }

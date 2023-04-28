@@ -16,7 +16,6 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<Array<string>>([]);
   const [socket, setSocket] = useState<WebSocket>();
-  const [profileImage, setProfileImage] = useState<string>();
 
   useEffect(() => {
     const endpoint = "ws://192.168.21.11:8080"
@@ -28,9 +27,6 @@ export default function Home() {
     }
 
     setSocket(socket);
-    if (user?.profileImage) {
-      //TODO: Set image
-    }
     return () => {
       socket.close();
     };
@@ -54,7 +50,7 @@ export default function Home() {
           <div className="flex gap-6 items-center">
 
             {
-              profileImage &&
+              user.profileImage &&
               <img
                 className="rounded-full w-16 h-16 object-cover"
                 src={user.profileImage}
