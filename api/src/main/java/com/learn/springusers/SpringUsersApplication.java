@@ -11,8 +11,8 @@ public class SpringUsersApplication {
 		SpringApplication.run(SpringUsersApplication.class, args);
 	}
 
-	@RequestMapping("/**")
-	public String index() {
+	@RequestMapping("/")
+	public String forward() {
 		return "";
 	}
 }

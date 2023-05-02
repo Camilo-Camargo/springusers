@@ -28,11 +28,12 @@ public class UserController {
     private FileService fileService;
 
     @GetMapping
-    @RequestMapping(value = "create", method = RequestMethod.POST, consumes = {
+    @RequestMapping(value = "api/create", method = RequestMethod.POST, consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<String> create(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
+            @RequestParam("role") String role,
             @RequestParam("profileImage") MultipartFile image) {
 
         byte[] imageBytes = null;
@@ -44,13 +45,13 @@ public class UserController {
         } catch (IOException e) {
             System.out.println(e);
         }
-        User user = new User(username, password, imageFilename);
+        User user = new User(username, password,role, imageFilename);
         userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User Created");
     }
 
     @GetMapping
-    @RequestMapping(value = "login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "api/login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<User> login(
             @RequestBody UserLoginDTO userLogin) {
         User user2 = userService.loginUser(userLogin.username, userLogin.password);

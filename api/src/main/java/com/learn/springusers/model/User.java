@@ -17,9 +17,11 @@ public class User {
   public User(
       String username,
       String password,
+      String role,
       String profileImage) {
     this.username = username;
     this.password = password;
+    this.role = role;
     this.profileImage = profileImage;
   }
 
@@ -35,4 +37,7 @@ public class User {
 
   @Column
   private String profileImage;
+
+  @Column
+  private String role;
 }

@@ -6,6 +6,7 @@ import { GlobalContext } from "../../storage/GlobalContext";
 
 type User = {
   username: string;
+  role?: string;
   profileImage: string;
 };
 
@@ -17,9 +18,13 @@ export default function Home() {
   const globalContext = useContext(GlobalContext);
   const navigate = useNavigate();
   const user = useLocation().state as User;
+  /*const user = {
+    username: "Camilo Camargo",
+    role: "guess"
+  } as User;*/
   const [message, setMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<Array<UserMessage>>([
-    /*{
+/*    {
       username: "Camilo",
       profileImage: "https://avatars.githubusercontent.com/u/24948289?v=4",
       message: "hello world"
@@ -28,7 +33,7 @@ export default function Home() {
   const [socket, setSocket] = useState<WebSocket>();
 
   useEffect(() => {
-    const endpoint = "ws://192.168.116.11:8080"
+    const endpoint = "ws://192.168.156.11:8080"
     const socket = new WebSocket(`${endpoint}/chat`);
 
 
@@ -77,6 +82,9 @@ export default function Home() {
         </div>
 
         <div className="flex gap-3">
+          {
+            user?.role == "admin" &&
+              <>
           <input
             className="bg-slate-200 text-slate-900 placeholder:text-slate-400 p-1 rounded shadow-sm"
             placeholder="Message" onChange={(e) => setMessage(e.target.value)} />
@@ -90,6 +98,8 @@ export default function Home() {
               }));
             }}
           >Send</button>
+          </>
+          }
         </div>
 
         {

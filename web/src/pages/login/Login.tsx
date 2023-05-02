@@ -23,7 +23,7 @@ export default function Login() {
         <button
           className="border rounded p-2 bg-slate-900 text-slate-50 font-bold hover:bg-slate-700"
           onClick={() => {
-            fetch(`/login`, {
+            fetch(`api/login`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
