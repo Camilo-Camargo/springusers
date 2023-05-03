@@ -18,18 +18,8 @@ export default function Home() {
   const globalContext = useContext(GlobalContext);
   const navigate = useNavigate();
   const user = useLocation().state as User;
-  /*const user = {
-    username: "Camilo Camargo",
-    role: "guess"
-  } as User;*/
   const [message, setMessage] = useState<string>("");
-  const [chatMessages, setChatMessages] = useState<Array<UserMessage>>([
-/*    {
-      username: "Camilo",
-      profileImage: "https://avatars.githubusercontent.com/u/24948289?v=4",
-      message: "hello world"
-    }*/
-  ]);
+  const [chatMessages, setChatMessages] = useState<Array<UserMessage>>([]);
   const [socket, setSocket] = useState<WebSocket>();
 
   useEffect(() => {

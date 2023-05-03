@@ -36,16 +36,13 @@ public class UserController {
             @RequestParam("role") String role,
             @RequestParam("profileImage") MultipartFile image) {
 
-        byte[] imageBytes = null;
-        String imageFilename = username + "/" + image.getOriginalFilename();
-
+        String imageFilename = image.getOriginalFilename();
         try {
-            imageBytes = image.getBytes();
-            fileService.saveFile(imageBytes, imageFilename);
+            imageFilename = "/" + fileService.saveFile(image, username + "/" + imageFilename);
         } catch (IOException e) {
             System.out.println(e);
         }
-        User user = new User(username, password,role, imageFilename);
+        User user = new User(username, password, role, imageFilename);
         userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User Created");
     }
