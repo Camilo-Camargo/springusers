@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { handleUpload } from "../../utils/Handlers";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [profileImage, setProfileImage] = useState();
+  // TODO: check profile if image is of type null
+  const [profileImage, setProfileImage] = useState<File | null>();
   const [role, setRole] = useState<string>("guess");
   const navigate = useNavigate();
 
-  const handleRegister = () => { 
+  const handleRegister = () => {
     const formData = new FormData();
     formData.append("profileImage", profileImage!);
     formData.append("username", username);
@@ -27,6 +29,7 @@ export default function Register() {
     navigate("/");
   }
 
+
   return (
     <div className="flex w-screen h-screen">
       <div className="flex flex-col m-auto gap-3">
@@ -40,14 +43,9 @@ export default function Register() {
           {!profileImage &&
             <div
               className="flex justify-center items-center bg-slate-900 text-slate-50 text-center w-16 h-16 rounded-full m-auto hover:w-20 hover:h-20"
-              onClick={() => {
-                const profileImageFile: HTMLInputElement = document.createElement("input");
-                profileImageFile.type = "file";
-                profileImageFile.onchange = (e) => {
-                  const target = e.target as any;
-                  setProfileImage(target.files[0]);
-                };
-                profileImageFile.click();
+              onClick={async () => {
+                // TODO: Remove casting
+                setProfileImage(await handleUpload() as File);
               }}
             >
               <span className="font-bold">Image</span>
@@ -66,7 +64,7 @@ export default function Register() {
           type="password"
           onChange={(e) => { setPassword(e.target.value) }}
         />
-        <select 
+        <select
           className="p-2 rounded bg-sky-600 text-slate-50"
           onChange={e => setRole(e.target.value)}
           value={role}
