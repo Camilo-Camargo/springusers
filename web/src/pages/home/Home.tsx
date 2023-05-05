@@ -20,18 +20,13 @@ export default function Home() {
   const globalContext = useContext(GlobalContext);
   const navigate = useNavigate();
   const user = useLocation().state as User;
-  /*const user = {
-    username: "camilocamargo",
-    profileImage: "https://avatars.githubusercontent.com/u/24948289?v=4",
-    role: "admin"
-  } as User; */
   const [message, setMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<Array<UserMessage>>([]);
   const [socket, setSocket] = useState<WebSocket>();
   const [userFiles, setUserFiles] = useState<Array<File>>([]);
 
   useEffect(() => {
-    const endpoint = "ws://192.168.21.11:8080"
+    const endpoint = "ws://192.168.122.11:8080"
     const socket = new WebSocket(`${endpoint}/chat`);
 
 
@@ -106,11 +101,39 @@ export default function Home() {
 
                 {
                   msg.type === "video/mp4" &&
-                  <video src={msg.message} className="w-64" controls/>
+                  <video
+                    className="w-96 h-auto"
+                    src={msg.message}
+                    controls
+                  />
+                }
+
+
+
+                {
+                  msg.type === "audio/mpeg" && <MdAudiotrack
+                    size={24}
+                    onClick={() => {
+                      const downloader: HTMLAnchorElement = document.createElement("a");
+                      downloader.href = msg.message;
+                      downloader.click();
+                    }}
+                  />
+                }
+
+                {
+                  msg.type === "text/plain" && <FiFile
+                    size={24}
+                    onClick={() => {
+                      const downloader: HTMLAnchorElement = document.createElement("a");
+                      downloader.href = msg.message;
+                      downloader.click();
+                    }}
+                  />
                 }
 
                 <div className="flex gap-2 justify-between items-center">
-                  <img className="w-12 h-12 rounded-full" src={msg.profileImage} />
+                  <img className="w-12 h-12 rounded-full object-cover" src={msg.profileImage} />
                   <span className="text-slate-400">{msg.username}</span>
                 </div>
               </div>
@@ -179,15 +202,14 @@ export default function Home() {
                   }).then(() => {
                     console.log("loaded")
                   }).then(() => {
-
+                    socket!.send(JSON.stringify({
+                      username: user.username,
+                      profileImage: user.profileImage,
+                      message: `upload-dir/shared/${user.username}/${file.name}`,
+                      type: file.type
+                    }))
                   })
 
-                  socket!.send(JSON.stringify({
-                    username: user.username,
-                    profileImage: user.profileImage,
-                    message: `upload-dir/shared/${user.username}/${file.name}`,
-                    type: file.type
-                  }))
                 });
 
                 setMessage("");
