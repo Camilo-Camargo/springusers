@@ -8,8 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table
 @Data
+@Table(name = "user")
 public class User {
   public User() {
   }
@@ -27,7 +27,7 @@ public class User {
 
   @Id
   @GeneratedValue()
-  public Long id;
+  public Long user_id;
 
   @Column
   private String username;
