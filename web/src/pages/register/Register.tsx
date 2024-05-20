@@ -17,8 +17,9 @@ export default function Register() {
     formData.append("password", password);
     formData.append("role", role);
 
-    //document.cookie = `username=${username} password=${password}`;
-    fetch("api/create", {
+    document.cookie = `username=${username} password=${password}`;
+
+    fetch("api/sign-up", {
       method: "post",
       body: formData
     }).then((res) => {
