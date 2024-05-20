@@ -1,12 +1,16 @@
 package com.learn.springusers.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.learn.springusers.dto.JoinRoomReqDTO;
+import com.learn.springusers.dto.RoomResDTO;
 import com.learn.springusers.dto.UserLoginDTO;
+import com.learn.springusers.model.Room;
 import com.learn.springusers.model.User;
 import com.learn.springusers.services.FileService;
 import com.learn.springusers.services.UserService;
@@ -27,10 +34,28 @@ public class UserController {
     @Autowired
     private FileService fileService;
 
-    @GetMapping
-    @RequestMapping(value = "api/create", method = RequestMethod.POST, consumes = {
+    @PutMapping("api/users/join")
+    public ResponseEntity<Room> join(
+            @RequestBody JoinRoomReqDTO req) {
+        Room room = userService.joinRoomById(req.userId, req.roomId);
+
+        if (room == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(room);
+    }
+
+    @GetMapping(value = "api/users/{id}/rooms")
+    public ResponseEntity<List<RoomResDTO>> findRooms(@PathVariable Long id) {
+        List<Room> rooms = userService.findRoomsById(id);
+        if (rooms == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.FOUND).body(RoomResDTO.fromEntities(rooms));
+    }
+
+    @RequestMapping(value = "api/sign-up", method = RequestMethod.POST, consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<String> create(
+    public ResponseEntity<User> create(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("role") String role,
@@ -44,14 +69,20 @@ public class UserController {
         }
         User user = new User(username, password, role, imageFilename);
         userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User Created");
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @GetMapping
-    @RequestMapping(value = "api/login", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping
+    @RequestMapping(value = "api/login", consumes = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<User> login(
             @RequestBody UserLoginDTO userLogin) {
         User user2 = userService.loginUser(userLogin.username, userLogin.password);
         return ResponseEntity.status(HttpStatus.CREATED).body(user2);
     }
+
+    @GetMapping("api/users")
+    public ResponseEntity<List<User>> findAll() {
+        return ResponseEntity.status(HttpStatus.FOUND).body(userService.findAll());
+    }
+
 }

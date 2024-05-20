@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.learn.springusers.model.User;
 
 public class UserDTO implements Serializable {
     private Long id;

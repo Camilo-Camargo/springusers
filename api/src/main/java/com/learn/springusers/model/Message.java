@@ -1,6 +1,7 @@
 package com.learn.springusers.model;
 
-import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +15,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "message")
+@Table
 public class Message {
   public Message() {
   }
@@ -22,16 +23,17 @@ public class Message {
   public Message(
       String message,
       String type,
-      User user
-) {
+      User user,
+      Room room) {
     this.message = message;
     this.type = type;
     this.user = user;
+    this.room = room;
   }
 
   @Id
-  @GeneratedValue()
-  public Long message_id;
+  @GeneratedValue
+  private Long id;
 
   @Column
   private String message;
@@ -40,10 +42,10 @@ public class Message {
   private String type;
 
   @OneToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "id")
   private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "room_id")
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "room_id", referencedColumnName = "id")
   private Room room;
 }

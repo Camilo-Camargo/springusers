@@ -3,7 +3,6 @@ package com.learn.springusers.model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +15,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "room")
+@Table
 public class Room {
   public Room() {
   }
@@ -31,8 +30,8 @@ public class Room {
   }
 
   @Id
-  @GeneratedValue()
-  public Long room_id;
+  @GeneratedValue
+  private Long id;
 
   @Column
   private String title;
@@ -43,7 +42,16 @@ public class Room {
 	@ManyToMany(cascade = CascadeType.ALL)
 	private List<User> users = new ArrayList<>();
 
-
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
   private List<Message> messages = new ArrayList<>();
+
+  public void addUser(User user){
+    for (User u: users){
+      if(u.getId() == user.getId()){
+        return;
+      }
+    }
+
+    users.add(user);
+  }
 }

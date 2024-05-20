@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user")
+@Table
 public class User {
   public User() {
   }
@@ -26,8 +26,8 @@ public class User {
   }
 
   @Id
-  @GeneratedValue()
-  public Long user_id;
+  @GeneratedValue
+  private Long id;
 
   @Column
   private String username;
