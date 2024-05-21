@@ -24,9 +24,9 @@ export default function Register() {
 
     const res = await apiPostFormData("/api/sign-up", formData);
     const resJson = await res.json();
-    console.log(resJson);
-
-    navigate("/");
+    if (resJson.id) {
+      navigate("/home", { state: resJson });
+    }
   }
 
 

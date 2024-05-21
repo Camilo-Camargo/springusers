@@ -83,7 +83,7 @@ public class UserController {
 
     @GetMapping("api/users")
     public ResponseEntity<List<UserResDTO>> findAll() {
-        return ResponseEntity.status(HttpStatus.FOUND).body(UserResDTO.fromEntities( userService.findAll()));
+        return ResponseEntity.status(HttpStatus.FOUND).body(UserResDTO.fromEntities(userService.findAll()));
     }
 
 }

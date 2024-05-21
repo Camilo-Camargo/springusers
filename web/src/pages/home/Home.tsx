@@ -173,8 +173,6 @@ export default function Home() {
             chatMessages.map((msg, index) => {
               let urlResource = "";
 
-              console.log(msg)
-
               switch (msg.type) {
                 case "image/png":
                 case "video/mp4":
@@ -308,8 +306,6 @@ export default function Home() {
                     fetch(`upload-dir/shared/${user.username}/${file.name}`, {
                       method: "post",
                       body: formData
-                    }).then(() => {
-                      console.log("loaded")
                     }).then(() => {
                       socket!.send(JSON.stringify({
                         username: user.username,
