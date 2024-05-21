@@ -108,7 +108,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen w-screen justify-between">
+    <div className="flex flex-col sm:flex-row h-screen w-screen justify-between">
       <div className="flex justify-between flex-col gap-10 items-center py-2 w-72">
         <div className="flex flex-col">
           <span className="font-light">Welcome back to</span>
