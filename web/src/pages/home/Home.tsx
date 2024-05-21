@@ -53,11 +53,14 @@ export default function Home() {
 
         rooms.forEach(r => {
           if (r.users.length > 2) {
+            // @ts-ignore
             groups.push({ ...r, image: user.profileImage });
           } else {
             if (chats.length == 1) setCurChat(r.id);
             const users: [] = r.users;
+            // @ts-ignore
             const target = users.find((u) => u.id != user.id);
+            // @ts-ignore
             chats.push({ ...r, image: target.profileImage, title: target.username });
           }
         });
@@ -170,6 +173,7 @@ export default function Home() {
         <div className="flex flex-col gap-6 w-full p-6 h-full overflow-scroll ">
           {
             chatMessages &&
+            // @ts-ignore
             chatMessages.map((msg, index) => {
               let urlResource = "";
 
@@ -181,18 +185,26 @@ export default function Home() {
                   urlResource = apiResourceUrl(msg.message);
               }
 
-              
+
 
               return (
                 <div key={index} className="w-full bg-slate h-fill gap-2 flex justify-between items-center">
-                  
-                  {msg.user.id !== user.id && <div className="w-14 h-14">
-                    <img className=" rounded-full object-cover" src={apiResourceUrl(msg.user.profileImage)} />
-                  </div>}
+
+                  {
+                    // @ts-ignore
+                    msg.user.id !== user.id && <div className="w-14 h-14">
+                      <img className=" rounded-full object-cover" src={
+                        // @ts-ignore
+                        apiResourceUrl(msg.user.profileImage)
+                      } />
+                    </div>}
 
                   {
                     msg.type === "message" &&
-                    <div className={`flex w-full  ${msg.user.id === user.id ? "justify-end" : "justify-start"}`}>
+                    <div className={`flex w-full  ${
+                      // @ts-ignore
+                      msg.user.id === user.id ? "justify-end" : "justify-start"
+                      }`}>
                       <p className="break-all text-right  p-2 bg-gray-50 rounded">{msg.message}</p>
                     </div>
                   }
@@ -233,9 +245,14 @@ export default function Home() {
                     />
                   }
 
-                  {msg.user.id === user.id && <div className="w-14 h-14">
-                    <img className=" rounded-full object-cover" src={apiResourceUrl(msg.user.profileImage)} />
-                  </div>}
+                  {
+                    // @ts-ignore
+                    msg.user.id === user.id && <div className="w-14 h-14">
+                      <img className=" rounded-full object-cover" src={
+                        // @ts-ignore
+                        apiResourceUrl(msg.user.profileImage)
+                      } />
+                    </div>}
 
 
                 </div>
