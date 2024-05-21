@@ -56,12 +56,20 @@ export default function Home() {
             // @ts-ignore
             groups.push({ ...r, image: user.profileImage });
           } else {
-            if (chats.length == 1) setCurChat(r.id);
-            const users: [] = r.users;
-            // @ts-ignore
-            const target = users.find((u) => u.id != user.id);
-            // @ts-ignore
-            chats.push({ ...r, image: target.profileImage, title: target.username });
+            if (chats.length === 1) {
+              setCurChat(r.id)
+            } else {
+              const users: [] = r.users;
+              if (users.length > 1) {
+                // @ts-ignore
+                const target = users.find((u) => u.id !== user.id);
+                // @ts-ignore
+                chats.push({ ...r, image: target.profileImage, title: target.username });
+              } else {
+                // @ts-ignore
+                chats.push({ ...r, image: user.profileImage, title: user.username });
+              }
+            }
           }
         });
 
