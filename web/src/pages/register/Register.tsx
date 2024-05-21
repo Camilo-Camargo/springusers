@@ -1,32 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleUpload } from "../../utils/Handlers";
+import { apiPostFormData } from "../../services/api";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // TODO: check profile if image is of type null
   const [profileImage, setProfileImage] = useState<File | null>();
-  const [role, setRole] = useState<string>("guess");
+  //const [role, setRole] = useState<string>("guess");
   const navigate = useNavigate();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const formData = new FormData();
     formData.append("profileImage", profileImage!);
     formData.append("username", username);
     formData.append("password", password);
-    formData.append("role", role);
+    //formData.append("role", role);
+    formData.append("role", "admin");
 
-    document.cookie = `username=${username} password=${password}`;
 
-    fetch("api/sign-up", {
-      method: "post",
-      body: formData
-    }).then((res) => {
-      res.json();
-    }).then((data) => {
-      console.log(data);
-    })
+    //document.cookie = `username=${username} password=${password}`;
+
+    const res = await apiPostFormData("/api/sign-up", formData);
+    const resJson = await res.json();
+    console.log(resJson);
+
     navigate("/");
   }
 
@@ -65,14 +64,14 @@ export default function Register() {
           type="password"
           onChange={(e) => { setPassword(e.target.value) }}
         />
-        <select
+        {/* <select
           className="p-2 rounded bg-sky-600 text-slate-50"
           onChange={e => setRole(e.target.value)}
           value={role}
         >
           <option value="admin">Admin</option>
           <option value="guess">Guess</option>
-        </select>
+        </select> */}
 
         <button
           className="border rounded p-2 bg-slate-900 text-slate-50 font-bold hover:bg-slate-700"

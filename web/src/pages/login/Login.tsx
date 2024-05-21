@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiPost } from "../../services/api";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -22,25 +23,16 @@ export default function Login() {
         />
         <button
           className="border rounded p-2 bg-slate-900 text-slate-50 font-bold hover:bg-slate-700"
-          onClick={() => {
-            fetch(`api/login`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                username: username,
-                password: password
-              })
-            }).then(
-              res => res.json()
-            ).then(
-              (data) => {
-                if (data.id) {
-                  navigate("/home", { state: data });
-                }
-              }
-            );
+          onClick={async () => {
+            const res = await apiPost("/api/login", {
+              username: username,
+              password: password
+            });
+            const resJson = await res.json();
+
+            if (resJson.id) {
+              navigate("/home", { state: resJson });
+            }
           }}
         >Login</button>
 
