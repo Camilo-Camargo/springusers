@@ -53,12 +53,12 @@ export default function Home() {
 
         rooms.forEach(r => {
           if (r.users.length > 2) {
-            groups.push({ ...r, image: user.profileImage});
+            groups.push({ ...r, image: user.profileImage });
           } else {
             if (chats.length == 1) setCurChat(r.id);
             const users: [] = r.users;
             const target = users.find((u) => u.id != user.id);
-            chats.push({...r, image: target.profileImage, title: target.username});
+            chats.push({ ...r, image: target.profileImage, title: target.username });
           }
         });
 
@@ -173,6 +173,8 @@ export default function Home() {
             chatMessages.map((msg, index) => {
               let urlResource = "";
 
+              console.log(msg)
+
               switch (msg.type) {
                 case "image/png":
                 case "video/mp4":
@@ -181,8 +183,15 @@ export default function Home() {
                   urlResource = apiResourceUrl(msg.message);
               }
 
+              
+
               return (
-                <div key={index} className="w-full bg-slate h-fill gap-6 flex justify-between items-center">
+                <div key={index} className="w-full bg-slate h-fill gap-2 flex justify-between items-center">
+                  
+                  {msg.user.id !== user.id && <div className="w-14 h-14">
+                    <img className=" rounded-full object-cover" src={apiResourceUrl(msg.user.profileImage)} />
+                  </div>}
+
                   {
                     msg.type === "message" &&
                     <div className={`flex w-full  ${msg.user.id === user.id ? "justify-end" : "justify-start"}`}>
@@ -225,6 +234,12 @@ export default function Home() {
                       }}
                     />
                   }
+
+                  {msg.user.id === user.id && <div className="w-14 h-14">
+                    <img className=" rounded-full object-cover" src={apiResourceUrl(msg.user.profileImage)} />
+                  </div>}
+
+
                 </div>
               );
             })
