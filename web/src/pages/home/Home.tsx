@@ -4,9 +4,10 @@ import { GlobalContext } from "../../storage/GlobalContext";
 import { FiFile, FiImage, FiVideo } from "react-icons/fi";
 import { MdAudiotrack, MdOutlineAttachFile } from "react-icons/md";
 import { handleUpload } from "../../utils/Handlers";
-import { apiResourceUrl, apiWebSocketUrl } from "../../services/api";
+import { apiGet, apiPost, apiResourceUrl, apiWebSocketUrl } from "../../services/api";
 
 type User = {
+  id: number;
   username: string;
   role?: string;
   profileImage: string;
@@ -25,27 +26,66 @@ export default function Home() {
   const [chatMessages, setChatMessages] = useState<Array<UserMessage>>([]);
   const [socket, setSocket] = useState<WebSocket>();
   const [userFiles, setUserFiles] = useState<Array<File>>([]);
+  const [curTab, setCurTab] = useState<string>("Chats");
+  const [curChat, setCurChat] = useState<number>(0);
+  const [tabs, setTabs] = useState<any>({});
 
   useEffect(() => {
     const socket = new WebSocket(apiWebSocketUrl("/chat"));
-
 
     if (globalContext.auth) {
       navigate("/login");
     }
 
     setSocket(socket);
+
     return () => {
       socket.close();
     };
   }, []);
 
+  useEffect(() => {
+    apiGet(`/api/users/${user.id}/rooms`)
+      .then(r => r.json())
+      .then(rooms => {
+        const chats = [];
+        const groups = [];
+
+        rooms.forEach(r => {
+          if (r.users.length > 2) {
+            groups.push({ ...r, image: user.profileImage});
+          } else {
+            if (chats.length == 1) setCurChat(r.id);
+            const users: [] = r.users;
+            const target = users.find((u) => u.id != user.id);
+            chats.push({...r, image: target.profileImage, title: target.username});
+          }
+        });
+
+
+
+        setTabs({
+          Chats: chats,
+          Groups: groups
+        });
+      });
+  }, [curTab]);
+
+  useEffect(() => {
+    apiGet(`/api/rooms/${curChat}/messages`)
+      .then(r => r.json())
+      .then(messages => {
+        setChatMessages(messages)
+      });
+  }, [curChat]);
+
   if (socket) {
     socket!.onmessage = (event: any) => {
-      const chatMessagesNew = [...chatMessages];
-      console.log(JSON.parse(event.data));
-      chatMessagesNew.push(JSON.parse(event.data));
-      setChatMessages(chatMessagesNew);
+      apiGet(`/api/rooms/${curChat}/messages`)
+        .then(r => r.json())
+        .then(messages => {
+          setChatMessages(messages);
+        });
     }
   }
 
@@ -55,36 +95,6 @@ export default function Home() {
     userFilesClone.push(file);
     setUserFiles(userFilesClone);
   }
-
-  const [curTab, setCurTab] = useState<string>("Chats");
-  const [curChat, setCurChat] = useState<number>(1);
-
-  const tabs: any = {
-    Chats: [
-      {
-        id: 1,
-        title: "Miguel",
-        description: "Description",
-        image: user.profileImage
-      },
-      {
-        id: 3,
-        title: "Cristianaaaaaa",
-        description: "Description",
-        image: user.profileImage
-      },
-
-    ],
-    Groups: [
-      {
-        id: 2,
-        title: "Groups",
-        description: "Description",
-        image: user.profileImage
-      },
-    ]
-  };
-
 
   return (
     <div className="flex h-screen w-screen justify-between">
@@ -111,18 +121,19 @@ export default function Home() {
           <div className="flex flex-col w-full">
             {
 
+              curTab in tabs &&
               tabs[curTab].map((chat) => {
 
                 return (
                   <button
-                    className={`text-left w-fit p-2 w-full ${chat.id === curChat ? "bg-gray-100" : " text-black "}`}
+                    className={`text-left p-2 w-full ${chat.id === curChat ? "bg-gray-100" : " text-black "}`}
                     onClick={() => {
                       setCurChat(chat.id);
                     }}
                   >
 
                     <div className="flex items-center gap-2">
-                      <img className="w-12 h-12" src={apiResourceUrl(chat.image)} />
+                      <img className="w-12 h-12 rounded-full border object-cover border-gray-500" src={apiResourceUrl(chat.image)} />
                       {chat.title}
                     </div>
                   </button>
@@ -139,7 +150,7 @@ export default function Home() {
             {
               user.profileImage &&
               <img
-                className="rounded-full w-16 h-16 object-cover"
+                className="rounded-full w-16 h-16 object-cover border border-gray-500"
                 src={apiResourceUrl(user.profileImage)}
               />
             }
@@ -147,13 +158,15 @@ export default function Home() {
 
           <div className="flex flex-col">
             <span>{user.username}</span>
-            <button className="text-left w-fit text-red-500 ">Logout</button>
+            <button onClick={() => {
+              navigate('/');
+            }} className="text-left w-fit text-red-500 ">Logout</button>
           </div>
 
         </div>
       </div>
 
-      <div className="flex flex-col w-full border-l border-gray-200">
+      <div className="flex flex-col w-full border-l border-gray-200 items-center">
         <div className="flex flex-col gap-6 w-full p-6 h-full overflow-scroll ">
           {
             chatMessages &&
@@ -172,7 +185,9 @@ export default function Home() {
                 <div key={index} className="w-full bg-slate h-fill gap-6 flex justify-between items-center">
                   {
                     msg.type === "message" &&
-                    <p className="break-all text-right w-full">{msg.message}</p>
+                    <div className={`flex w-full  ${msg.user.id === user.id ? "justify-end" : "justify-start"}`}>
+                      <p className="break-all text-right  p-2 bg-gray-50 rounded">{msg.message}</p>
+                    </div>
                   }
 
                   {
@@ -254,7 +269,15 @@ export default function Home() {
 
               <button
                 className="bg-slate-900 text-slate-50 font-bold p-2 rounded "
-                onClick={() => {
+                onClick={async () => {
+
+                  await apiPost("/api/messages", {
+                    "message": message,
+                    "type": "message",
+                    "userId": user.id,
+                    "roomId": curChat
+                  });
+
                   socket!.send(JSON.stringify({
                     username: user.username,
                     profileImage: user.profileImage,

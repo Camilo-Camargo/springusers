@@ -12,16 +12,27 @@ import org.springframework.web.bind.annotation.RestController;
 import com.learn.springusers.dto.CreateMessageReqDTO;
 import com.learn.springusers.dto.MessageResDTO;
 import com.learn.springusers.model.Message;
+import com.learn.springusers.model.User;
 import com.learn.springusers.services.MessageService;
+import com.learn.springusers.services.UserService;
 
 @RestController
 public class MessageController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("api/messages")
     public ResponseEntity<MessageResDTO> create(@RequestBody CreateMessageReqDTO createMessageReqDTO) {
-        Message message = messageService.create(createMessageReqDTO);
+
+        User user = userService.findById(createMessageReqDTO.userId);
+
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        Message message = messageService.create(createMessageReqDTO, user);
         return ResponseEntity.status(HttpStatus.FOUND).body(MessageResDTO.fromEntity(message));
     }
 

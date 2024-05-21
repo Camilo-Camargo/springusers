@@ -17,9 +17,7 @@ public class MessageService implements IMessageService {
 	private MessageRepository messageRepository;
 
 	@Override
-	public Message create(CreateMessageReqDTO messageDTO) {
-		User user = new User();
-		user.setId(messageDTO.userId);
+	public Message create(CreateMessageReqDTO messageDTO, User user) {
 		Room room = new Room();
 		room.setId(messageDTO.roomId);
 

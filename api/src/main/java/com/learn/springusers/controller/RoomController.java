@@ -37,11 +37,11 @@ public class RoomController {
     }
 
     @PostMapping("api/rooms")
-    public ResponseEntity<Room> create(
+    public ResponseEntity<RoomResDTO> create(
             @RequestBody CreateRoomReqDTO req) {
 
         User user = userService.findById(req.userId);
-
+      
         if (user == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -49,7 +49,7 @@ public class RoomController {
         Room room = new Room(req.title, req.description, user);
         room = roomService.createRoom(room);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(room);
+        return ResponseEntity.status(HttpStatus.CREATED).body(RoomResDTO.fromEntity(room));
     }
 
     @GetMapping("api/rooms/{id}/messages")

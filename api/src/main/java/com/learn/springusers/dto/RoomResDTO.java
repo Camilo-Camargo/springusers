@@ -17,7 +17,7 @@ public class RoomResDTO {
     private Long id;
     private String title;
     private String description;
-    private List<User> users;
+    private List<UserResDTO> users;
     private List<MessageResDTO> messages;
 
     public static RoomResDTO fromEntity(Room room) {
@@ -26,11 +26,13 @@ public class RoomResDTO {
             messages.add(MessageResDTO.fromEntity(msg));
         }
 
+        List<UserResDTO> users = UserResDTO.fromEntities(room.getUsers());
+
         return new RoomResDTO(
                 room.getId(),
                 room.getTitle(),
                 room.getDescription(),
-                room.getUsers(),
+                users,
                 messages);
     }
 

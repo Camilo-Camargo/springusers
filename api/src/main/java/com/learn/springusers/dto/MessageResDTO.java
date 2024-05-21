@@ -18,7 +18,7 @@ public class MessageResDTO {
     private Long id;
     private String message;
     private String type;
-    private User user;
+    private UserResDTO user;
     private RoomResDTO room;
 
     public static MessageResDTO fromEntity(Message from) {
@@ -28,11 +28,13 @@ public class MessageResDTO {
         roomRes.setDescription(room.getDescription());
         roomRes.setTitle(room.getTitle());
 
+        UserResDTO user = UserResDTO.fromEntity(from.getUser());
+
         return new MessageResDTO(
                 from.getId(),
                 from.getMessage(),
                 from.getType(),
-                from.getUser(),
+                user,
                 roomRes);
     }
 

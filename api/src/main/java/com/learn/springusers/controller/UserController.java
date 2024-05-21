@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.learn.springusers.dto.JoinRoomReqDTO;
 import com.learn.springusers.dto.RoomResDTO;
 import com.learn.springusers.dto.UserLoginDTO;
+import com.learn.springusers.dto.UserResDTO;
 import com.learn.springusers.model.Room;
 import com.learn.springusers.model.User;
 import com.learn.springusers.services.FileService;
@@ -35,14 +36,14 @@ public class UserController {
     private FileService fileService;
 
     @PutMapping("api/users/join")
-    public ResponseEntity<Room> join(
+    public ResponseEntity<RoomResDTO> join(
             @RequestBody JoinRoomReqDTO req) {
         Room room = userService.joinRoomById(req.userId, req.roomId);
 
         if (room == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(room);
+        return ResponseEntity.status(HttpStatus.OK).body(RoomResDTO.fromEntity(room));
     }
 
     @GetMapping(value = "api/users/{id}/rooms")
@@ -55,7 +56,7 @@ public class UserController {
 
     @RequestMapping(value = "api/sign-up", method = RequestMethod.POST, consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<User> create(
+    public ResponseEntity<UserResDTO> create(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("role") String role,
@@ -69,20 +70,20 @@ public class UserController {
         }
         User user = new User(username, password, role, imageFilename);
         userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResDTO.fromEntity(user));
     }
 
     @PostMapping
     @RequestMapping(value = "api/login", consumes = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<User> login(
+    public ResponseEntity<UserResDTO> login(
             @RequestBody UserLoginDTO userLogin) {
         User user2 = userService.loginUser(userLogin.username, userLogin.password);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user2);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResDTO.fromEntity(user2));
     }
 
     @GetMapping("api/users")
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.status(HttpStatus.FOUND).body(userService.findAll());
+    public ResponseEntity<List<UserResDTO>> findAll() {
+        return ResponseEntity.status(HttpStatus.FOUND).body(UserResDTO.fromEntities( userService.findAll()));
     }
 
 }

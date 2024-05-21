@@ -7,7 +7,7 @@ export function apiHTTPURL(path: string){
 }
 
 export async function apiGet(path: string) {
-    return await fetch(API_DOMAIN);
+    return await fetch(apiHTTPURL(path));
 }
 
 export async function apiPost(path: string, data?: {}) {
